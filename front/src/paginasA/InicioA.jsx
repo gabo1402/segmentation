@@ -19,7 +19,7 @@ function Inicio() {
         <h1>Página de Inicio</h1>
         <p>Bienvenido a nuestra página de inicio.</p>
 
-        <h3>Datos del Archivo Excel</h3>
+        <h3>Datos de la Base de Datos</h3>
         {data.length > 0 ? (
           <table border="1">
             <thead>
@@ -28,19 +28,15 @@ function Inicio() {
                 <th>Nombre</th>
                 <th>Dirección</th>
                 <th>Fecha</th>
-                <th>Hora SS</th>
-                <th>Estado</th>
               </tr>
             </thead>
             <tbody>
               {data.map((row, index) => (
                 <tr key={index}>
-                  <td>{row.ID}</td>
-                  <td>{row.Name}</td>
-                  <td>{row.Direccion}</td>
-                  <td>{row.Fecha}</td>
-                  <td>{row.Hora_ss}</td>
-                  <td>{row.Estado}</td>
+                  <td>{row.id}</td> 
+                  <td>{row.nombre}</td> 
+                  <td>{row.direccion}</td> 
+                  <td>{row.fecha}</td> 
                 </tr>
               ))}
             </tbody>

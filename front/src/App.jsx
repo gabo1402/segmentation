@@ -10,8 +10,12 @@ import MisPostulaciones from './paginasE/MisPostulacionesE';
 import InicioS from './paginasS/InicioSo';
 import PostularProyecto from './paginasS/NuestrosProyectosS';
 import NuestrosProyectos from './paginasS/PostularProyectoS';
+
 import Login from './logIn/Login';
 import CrearCuenta from './logIn/crearCuenta';
+
+
+import Login from './Login';
 
 
 function App() {

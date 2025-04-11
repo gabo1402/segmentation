@@ -7,9 +7,9 @@ function Inicio() {
   const [data, setData] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/data")
-      .then((response) => setData(response.data))
-      .catch((error) => console.error("Error al obtener datos:", error));
+    axios.get("http://localhost:5000/data") //llama al end point
+      .then((response) => setData(response.data)) //peticion exitosa actializa estado
+      .catch((error) => console.error("Error al obtener datos:", error)); 
   }, []);
 
   return (

@@ -10,7 +10,9 @@ import MisPostulaciones from './paginasE/MisPostulacionesE';
 import InicioS from './paginasS/InicioSo';
 import PostularProyecto from './paginasS/NuestrosProyectosS';
 import NuestrosProyectos from './paginasS/PostularProyectoS';
-import Login from './Login';
+import Login from './logIn/Login';
+import CrearCuenta from './logIn/crearCuenta';
+
 
 function App() {
   return (
@@ -27,6 +29,7 @@ function App() {
         <Route path="/nuestrosProyectosS" element={<PostularProyecto/>} />
         <Route path="/postularProyectoS" element={<NuestrosProyectos />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/crearCuenta" element={<CrearCuenta />} />
       </Routes>
     </>
   );

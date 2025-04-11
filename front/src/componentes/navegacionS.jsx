@@ -5,7 +5,6 @@ import './navegacion.css';
 function NavCub() {
   return (
     <div className="layout">
-      {/* Barra lateral izquierda */}
       <nav className="nav-bar">
         <ul>
           <img src="./src/assets/logo_servicio.png" alt="Logo" className="logo servicio social" />
@@ -15,11 +14,9 @@ function NavCub() {
         </ul>
       </nav>
       <header className="top-bar">
-        <input type="text" placeholder="Search" className="search-bar" />
         <div className="user-info">
           <span className="notifications">🔔</span>
           <span className="username">Alejandra Ramírez</span>
-          <img src="/path-to-avatar.jpg" alt="User Avatar" className="avatar" />
         </div>
       </header>
     </div>

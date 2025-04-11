@@ -5,7 +5,6 @@ import './navegacion.css';
 function NavCub() {
   return (
     <div className="layout">
-      {/* Barra lateral izquierda */}
       <nav className="nav-bar">
         <ul>
           <img src="./src/assets/logo_servicio.png" alt="Logo" className="logo servicio social" />

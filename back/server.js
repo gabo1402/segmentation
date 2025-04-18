@@ -14,6 +14,11 @@ const db = mysql.createConnection({
     database: "servicio_social"
 });
 
+    password: "", 
+    database: "prueba_social" 
+});
+
+// Conectar a la base de datos
 db.connect((err) => {
     if (err) {
         console.error("❌ Error al conectar a MySQL:", err);
@@ -189,6 +194,21 @@ app.get('/estudiantes', (req, res) => {
     db.query('SELECT * FROM Estudiante ', (err, results) => {
         if (err) return res.status(500).json({ message: 'Error al obtener estudiantes' });
         res.json(results);
+    }
+    console.log("✅ Conectado a MySQL");
+});
+
+// Endpoint para obtener datos de la base de datos
+app.get("/data", (req, res) => {
+    const sql = "SELECT * FROM status_tabla"; // Cambia 'usuarios' por tu tabla
+    db.query(sql, (err, results) => {
+        if (err) {
+            console.error("❌ Error al obtener datos:", err);
+            res.status(500).json({ error: "Error al obtener datos" });
+            return;
+        }
+        res.json(results); // Enviar los datos en formato JSON
+
     });
 });
 
@@ -217,3 +237,4 @@ const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
 });
+

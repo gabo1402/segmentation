@@ -20,8 +20,6 @@ import Login from './logIn/Login';
 import CrearCuenta from './logIn/crearCuenta';
 
 
-
-
 function App() {
   return (
     <>

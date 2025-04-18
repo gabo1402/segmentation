@@ -70,7 +70,7 @@ export default function SignupPage() {
 
         <p className="login-text">- o -</p>
         <p className="login-text">
-          ¿No tienes una cuenta? <Link to="/crearCuenta">Nuestros proyectos</Link>
+          ¿No tienes una cuenta? <Link to="/crearCuenta">Crear </Link>
         </p>
       </div>
     </div>

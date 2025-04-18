@@ -6,6 +6,7 @@
     left: 0;
     top: 0;
     height: 100vh;
+    border-right: 1px solid #dcdcdc;
 }
 
 .nav-bar ul {
@@ -29,11 +30,6 @@
     transition: background-color 0.3s ease;
 }
 
-.nav-bar a:hover {
-    background-color: #fbf6f6; 
-    color: black;
-}
-
 
 .top-bar {
     background-color: #fbf6f6;
@@ -48,15 +44,7 @@
     left: 240px;
     height: 60px;
     color: black;
-}
-
-.search-bar {
-    width: 400px;
-    padding: 8px;
-    border-radius: 20px;
-    border: 3px solid #000000;
-    background-color: #f5efe8;
-    color: black;
+    border-bottom: 1px solid #dcdcdc;
 }
 
 .user-info {
@@ -73,10 +61,4 @@
 
 .username {
     margin-left: 10px;
-}
-
-.avatar {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
 }

@@ -22,7 +22,7 @@ export default function CrearCuenta() {
   // Socio
   const [tipoSocio, setTipoSocio] = useState("");
   const [telefonoSocio, setTelefonoSocio] = useState("");
-
+  const [status, setStatus] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleRegistro = async () => {
@@ -49,15 +49,9 @@ export default function CrearCuenta() {
         correo: email,
         contrasena: password,
         nombre,
+        status: status,
         tipo_socio: tipoSocio,
         telefono_socio: telefonoSocio,
-      };
-    } else if (tipoUsuario === "admin") {
-      url = "http://localhost:5000/registro/administrador";
-      body = {
-        correo: email,
-        contrasena: password,
-        nombre,
       };
     }
 
@@ -93,7 +87,6 @@ export default function CrearCuenta() {
       value={tipoUsuario}
       onChange={(e) => setTipoUsuario(e.target.value)}
     >
-      <option value="admin">Administrador</option>
       <option value="estudiante">Estudiante</option>
       <option value="socio">Socio formador</option>
     </select>
@@ -117,11 +110,8 @@ export default function CrearCuenta() {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button
-          className="toggle-btn"
-          onClick={() => setShowPassword(!showPassword)}
-        >
-          {showPassword ? "Ocultar" : "Mostrar"}
+        <button className="toggle-btn" onClick={() => setShowPassword(!showPassword)}>
+          <img src={showPassword ? "/src/assets/ojo.png" : "/src/assets/ojo (1).png"} alt="Mostrar" className="icon" />
         </button>
       </div>
     </div>

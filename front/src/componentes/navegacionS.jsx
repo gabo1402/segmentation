@@ -17,17 +17,9 @@ function NavCub() {
         </ul>
       </nav>
       <header className="top-bar">
-
         <div className="user-info">
           <span className="notifications">🔔</span>
           <span className="username">Alejandra Ramírez</span>
-
-        <input type="text" placeholder="Search" className="search-bar" />
-        <div className="user-info">
-          <span className="notifications">🔔</span>
-          <span className="username">Alejandra Ramírez</span>
-          <img src="/path-to-avatar.jpg" alt="User Avatar" className="avatar" />
-
         </div>
       </header>
     </div>

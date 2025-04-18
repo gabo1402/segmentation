@@ -1,9 +1,116 @@
 .cube {
-    flex-grow: 1;
-    margin-right: 500px;
-    padding: 20px;
-    margin-top: 100px; 
-    background-color: #fbf6f6;
-    color: rgb(0, 0, 0);
+    padding: 2rem;
+    text-align: center;
+    margin-left: 200px;
+    padding-top: 60px;
+    background-color: #fefaf4;
     min-height: 100vh;
+  }
+  
+  .titulo {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .card-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+  }
+  
+  .info-card {
+    background-color: #e0e0e0;
+    padding: 2rem;
+    width: 200px;
+    height: 150px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+  
+  .info-card:hover {
+    background-color: #cfcfcf;
+    transform: scale(1.05);
+  }
+  
+  .socios-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .socios-table th,
+  .socios-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    color: #000; /* Asegura texto negro */
+  }
+  
+  .socios-table th {
+    background-color: #f1f1f1;
+    font-weight: 600;
+    color: #000; /* texto negro en encabezados */
+  }
+  
+  .socios-table tr:hover {
+    background-color: #fafafa;
+  }
+  
+  select {
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+  
+  .aprobado {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  
+  .aceptado {
+    background-color: #def7ec;
+    color: #036666;
+  }
+  
+  .rechazado {
+    background-color: #fde8e8;
+    color: #b91c1c;
+  }
+  
+  .pendiente {
+    background-color: #fef3c7;
+    color: #92400e;
+  }
+  
+  .en-proceso {
+    background-color: #ede9fe;
+    color: #6b21a8;
+  }
+  
+
+  .tabla-container {
+    overflow-x: auto;
+    margin-top: 20px;
 }

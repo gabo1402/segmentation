@@ -39,7 +39,7 @@ app.post('/registro/alumno', (req, res) => {
         if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
 
         db.query(
-            'INSERT INTO estudiante (correo, contrasena, nombre, matricula, carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO estudiante (correo, contrasena, nombre, matricula, carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)',
             [correo, hash, nombre, matricula, carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono],
             (err, result) => {
                 if (err) {
@@ -81,8 +81,8 @@ app.post('/registro/socio', (req, res) => {
         if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
 
         db.query(
-            'INSERT INTO Socio (correo, contrasena, nombre, tipo_socio, telefono_socio) VALUES (?, ?, ?, ?, ?)',
-            [correo, hash, nombre, tipo_socio, telefono_socio],
+            'INSERT INTO Socio (correo, contrasena, nombre, status, tipo_socio, telefono_socio) VALUES (?, ?, ?, ?, ?, ?)',
+            [correo, hash, nombre, 'pendiente', tipo_socio, telefono_socio],
             (err, result) => {
                 if (err) {
                     console.error('Error al registrar socio:', err);
@@ -94,8 +94,32 @@ app.post('/registro/socio', (req, res) => {
     });
 });
 
-// Login
-app.post('/login', (req, res) => {
+// Obtener socios pendientes
+app.get('/socio/pendiente', (req, res) => {
+    db.query('SELECT id_socio, nombre, correo, status FROM Socio WHERE status = "pendiente"', (err, results) => {
+      if (err) {
+        console.error('Error al obtener socios pendientes:', err);
+        return res.status(500).json({ message: 'Error al obtener socios' });
+      }
+      res.json(results);
+    });
+  });
+  
+  // Actualizar el status de un socio
+  app.put('/socio/:id/status', (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+  
+    db.query('UPDATE Socio SET status = ? WHERE id_socio = ?', [status, id], (err, result) => {
+      if (err) {
+        console.error('Error al actualizar el status:', err);
+        return res.status(500).json({ message: 'Error al actualizar status' });
+      }
+      res.json({ message: 'Status actualizado correctamente' });
+    });
+  });
+
+  app.post('/login', (req, res) => {
     const { correo, contrasena } = req.body;
 
     const usuarios = [
@@ -124,6 +148,12 @@ app.post('/login', (req, res) => {
                 buscarUsuario();
             } else {
                 const usuario = results[0];
+
+                // Si es socio y su status no es "aceptado", rechazar login
+                if (tabla === 'Socio' && usuario.status !== 'aceptado') {
+                    return res.status(403).json({ message: 'Tu cuenta aún no ha sido aceptada' });
+                }
+
                 bcrypt.compare(contrasena, usuario.contrasena, (err, esValido) => {
                     if (err) return res.status(500).json({ message: 'Error al verificar contraseña' });
 
@@ -144,6 +174,7 @@ app.post('/login', (req, res) => {
     buscarUsuario();
 });
 
+
 // Obtener todos los usuarios
 app.get('/administradores', (req, res) => {
     db.query('SELECT * FROM Administrador', (err, results) => {
@@ -160,7 +191,7 @@ app.get('/socios', (req, res) => {
 });
 
 app.get('/estudiantes', (req, res) => {
-    db.query('SELECT * FROM Estudiante', (err, results) => {
+    db.query('SELECT * FROM Estudiante ', (err, results) => {
         if (err) return res.status(500).json({ message: 'Error al obtener estudiantes' });
         res.json(results);
     }
@@ -180,6 +211,27 @@ app.get("/data", (req, res) => {
 
     });
 });
+
+app.get('/proyectos', (req, res) => {
+    db.query('SELECT * FROM Proyecto WHERE status_proyecto = "pendiente"', (err, results) => {
+        if (err) return res.status(500).json({ message: 'Error al obtener proyectos' });
+        res.json(results);
+    });
+});
+
+// Actualizar el status de un proyecto
+app.put('/proyecto/:id/status', (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+  
+    db.query('UPDATE Proyecto SET status_proyecto = ? WHERE id_proyecto = ?', [status, id], (err, result) => {
+      if (err) {
+        console.error('Error al actualizar el status:', err);
+        return res.status(500).json({ message: 'Error al actualizar status' });
+      }
+      res.json({ message: 'Status actualizado correctamente' });
+    });
+  });
 
 const PORT = 5000;
 app.listen(PORT, () => {

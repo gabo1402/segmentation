@@ -1,13 +1,13 @@
 import React from 'react';
 import NavCub from '../componentes/navegacion';
 
-function Productos() {
+function AlumnosPos() {
     return (
         <div className="cube">
           <NavCub />
-          <h1>Página de Pruducto</h1>
+          <h1>Status cuenta</h1>
         </div>
-      );
-    }
+    );
+}
 
-export default Productos;
+export default AlumnosPos;

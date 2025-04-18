@@ -5,7 +5,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     margin: 0;
   }
   
@@ -51,6 +51,7 @@ body {
     padding: 10px;
     background-color: #f9f4ee;
     margin-bottom: 50px;
+    color: #000;
   }
   
   .input-box input {
@@ -59,6 +60,7 @@ body {
     flex: 1;
     background: none;
     font-size: 14px;
+    color: #000;
     padding-left: 10px;
   }
   
@@ -103,4 +105,57 @@ body {
     height: 20px;
     margin-right: 10px;
     vertical-align: middle;
+  }
+
+  select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #f9f4ee;
+    outline: none;
+    margin-top: 5px;
+    color: #000;
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #f9f4ee;
+    outline: none;
+    color: #000;
+  }
+  
+  .input-group input:focus,
+  select:focus {
+    border-color: #0056b3;
+  }
+  
+  .signup-btn:disabled {
+    background: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .signup-btn:disabled:hover {
+    background: #cccccc;
+  }
+  
+  @media (max-width: 400px) {
+    .form-box {
+      width: 90%;
+      padding: 20px;
+    }
+  
+    .title {
+      font-size: 24px;
+    }
+  }
+  
+  label {
+    color: black; /* o cualquier color que se vea bien con tu fondo */
+    font-weight: bold;
   }

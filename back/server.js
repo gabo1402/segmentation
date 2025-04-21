@@ -2,21 +2,20 @@ const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
+const dotenv = require("dotenv")
+
+dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "servicio_social"
-});
-
-    password: "", 
-    database: "prueba_social" 
-});
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME
+  });
 
 // Conectar a la base de datos
 db.connect((err) => {
@@ -160,7 +159,7 @@ app.get('/socio/pendiente', (req, res) => {
                     if (esValido) {
                         return res.json({
                             message: 'Login exitoso',
-                            tipo: tabla.toLowerCase(), // estudiante, administrador, socio
+                            tipo: tabla.toLowerCase(), 
                             datos: usuario
                         });
                     } else {
@@ -194,7 +193,7 @@ app.get('/estudiantes', (req, res) => {
     db.query('SELECT * FROM Estudiante ', (err, results) => {
         if (err) return res.status(500).json({ message: 'Error al obtener estudiantes' });
         res.json(results);
-    }
+    })
     console.log("✅ Conectado a MySQL");
 });
 
@@ -232,6 +231,36 @@ app.put('/proyecto/:id/status', (req, res) => {
       res.json({ message: 'Status actualizado correctamente' });
     });
   });
+
+  app.put('/proyecto/:id/editar', (req, res) => {
+    const { id } = req.params;  // Obtener el ID del proyecto
+    const { columna, nuevoValor } = req.body;  // Obtener la columna y el nuevo valor
+
+    // Verificar que la columna y el nuevo valor están presentes
+    if (!columna || nuevoValor === undefined) {
+        return res.status(400).json({ message: 'Faltan datos para actualizar' });
+    }
+
+    // Consulta SQL para actualizar el proyecto en la base de datos
+    const sql = `UPDATE Proyecto SET \`${columna}\` = ? WHERE id_proyecto = ?`;
+    db.query(sql, [nuevoValor, id], (err, result) => {
+        if (err) {
+            console.error('❌ Error al actualizar proyecto:', err);
+            return res.status(500).json({ message: 'Error al actualizar el proyecto' });
+        }
+
+        // Verificar si no se afectaron filas, lo que significa que no se encontró el proyecto
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Proyecto no encontrado' });
+        }
+
+        // Si se actualizó correctamente, devolver un mensaje de éxito
+        res.json({ message: 'Proyecto actualizado exitosamente' });
+    });
+});
+
+
+
 
 const PORT = 5000;
 app.listen(PORT, () => {

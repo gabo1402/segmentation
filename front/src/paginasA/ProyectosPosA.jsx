@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import NavCub from '../componentes/navegacion';
-import './tablasA.css'; 
+import './tablasA.css';
 
 function ProyectosPos() {
     const [proyectos, setProyectos] = useState([]);
+    const [columnasVisibles, setColumnasVisibles] = useState([]);
+    const [celdaSeleccionada, setCeldaSeleccionada] = useState(null); // { filaId, columna }
+    const [valorEditado, setValorEditado] = useState('');
+    const [valorOriginal, setValorOriginal] = useState('');
 
     const columnasDisponibles = {
         id_proyecto: 'ID',
@@ -26,11 +30,7 @@ function ProyectosPos() {
         horario: 'Horario',
         horas_acreditar: 'Horas a Acreditar',
         valor_proyecto: 'Valor',
-        // Agrega aquí cualquier otro campo que quieras mostrar
     };
-
-    const [columnasVisibles, setColumnasVisibles] = useState([]);
-
 
     useEffect(() => {
         axios.get('http://localhost:5000/proyectos')
@@ -42,11 +42,57 @@ function ProyectosPos() {
             });
     }, []);
 
+    const handleCeldaClick = (filaId, columna, valorActual) => {
+        setCeldaSeleccionada({ filaId, columna });
+        setValorEditado(valorActual);
+        setValorOriginal(valorActual);
+    };
+
+    const guardarCambio = async () => {
+        const { filaId, columna } = celdaSeleccionada;  // Aquí obtienes la fila y la columna seleccionadas
+        const nuevoValor = valorEditado;  // El valor que has editado en el input
+    
+        try {
+            // Realizar la solicitud PUT con el valor de la columna y el nuevo valor
+            const response = await fetch(`http://localhost:5000/proyecto/${filaId}/editar`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ columna, nuevoValor }),  // Enviar columna y nuevo valor al backend
+            });
+    
+            // Verificar si la respuesta fue exitosa
+            const data = await response.json();
+            if (response.ok) {
+                // Si la respuesta es exitosa, obtén los proyectos actualizados desde el backend
+                const proyectosActualizados = await axios.get('http://localhost:5000/proyectos');
+                setProyectos(proyectosActualizados.data);  // Actualizar los proyectos en el estado
+    
+                setCeldaSeleccionada(null);  // Desmarcar la celda seleccionada
+                setValorEditado('');  // Limpiar el valor editado
+            } else {
+                console.error('Error al actualizar proyecto:', data.message);
+            }
+        } catch (error) {
+            console.error('Error al guardar cambio:', error);
+        }
+    };
+    
+
+    const cancelarEdicion = () => {
+        setCeldaSeleccionada(null);
+        setValorEditado('');
+        setValorOriginal('');
+    };
+
     function actualizarStatus(id, nuevoStatus) {
         axios.put(`http://localhost:5000/proyecto/${id}/status`, { status: nuevoStatus })
             .then(() => {
                 setProyectos(prev =>
-                    prev.filter(proyecto => proyecto.id_proyecto !== id)
+                    prev.map(proy =>
+                        proy.id_proyecto === id ? { ...proy, status_proyecto: nuevoStatus } : proy
+                    )
                 );
             })
             .catch(error => {
@@ -80,24 +126,43 @@ function ProyectosPos() {
             </div>
 
             <div className="tabla-container">
-    <div className="tabla-scroll-wrapper">
-        <table className="tabla-proyectos">
-            <thead>
-                <tr>
-                    {columnasVisibles.map(col => (
-                        <th key={col}>{columnasDisponibles[col]}</th>
-                    ))}
-                    <th>Acciones</th>
-                </tr>
-            </thead>
-            <tbody>
-                {proyectos.map(proyecto => (
-                    <tr key={proyecto.id_proyecto}>
-                        {columnasVisibles.map(col => (
-                            <td key={col}>{proyecto[col]}</td>
-                        ))}
-                        <td>
-    <button
+                <div className="tabla-scroll-wrapper">
+                    <table className="tabla-proyectos">
+                        <thead>
+                            <tr>
+                                {columnasVisibles.map(col => (
+                                    <th key={col}>{columnasDisponibles[col]}</th>
+                                ))}
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {proyectos.map(proyecto => (
+                                <tr key={proyecto.id_proyecto}>
+                                    {columnasVisibles.map(col => (
+                                        <td
+                                            key={col}
+                                            onClick={() =>
+                                                handleCeldaClick(proyecto.id_proyecto, col, proyecto[col])
+                                            }
+                                        >
+                                            {celdaSeleccionada &&
+                                            celdaSeleccionada.filaId === proyecto.id_proyecto &&
+                                            celdaSeleccionada.columna === col ? (
+                                                <input
+                                                    type="text"
+                                                    value={valorEditado}
+                                                    onChange={e => setValorEditado(e.target.value)}
+                                                    onBlur={guardarCambio}
+                                                    autoFocus
+                                                />
+                                            ) : (
+                                                proyecto[col]
+                                            )}
+                                        </td>
+                                    ))}
+                                    <td>
+                                        <button
         className="aprobar"
         onClick={() => actualizarStatus(proyecto.id_proyecto, 'aprobado')}
     >
@@ -110,14 +175,27 @@ function ProyectosPos() {
     >
         Rechazar
     </button>
-</td>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
 
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    </div>
-</div>
+            {celdaSeleccionada && (
+                <div className="editor-container" style={{ marginTop: '20px' }}>
+                    <h3>Editando: {columnasDisponibles[celdaSeleccionada.columna]}</h3>
+                    <input
+                        type="text"
+                        value={valorEditado}
+                        onChange={(e) => setValorEditado(e.target.value)}
+                        style={{ marginRight: '10px' }}
+                    />
+                    <button onClick={guardarCambio}>Guardar cambios</button>
+                    <button onClick={cancelarEdicion} style={{ marginLeft: '8px' }}>Cancelar</button>
+                </div>
+            )}
         </div>
     );
 }

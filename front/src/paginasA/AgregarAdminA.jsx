@@ -13,7 +13,7 @@ export default function CrearCuentaAdmin() {
     const url = "http://localhost:5000/registro/administrador";
     const body = {
       correo: email,
-      contrasena: password,
+      contraseña: password,
       nombre,
     };
 

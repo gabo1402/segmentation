@@ -28,18 +28,18 @@ db.connect((err) => {
 
 // Registro de alumno
 app.post('/registro/alumno', (req, res) => {
-    const { correo, contrasena, nombre, matricula, carrera, semestre, id_campus, doble_titulacion, candidato_graduar, telefono } = req.body;
+    const { correo, contraseña, nombre, matricula, id_carrera, semestre, id_campus, doble_titulacion, candidato_graduar, telefono } = req.body;
 
-    if (!correo || !contrasena || !nombre || !matricula || !carrera || !semestre || telefono === undefined || doble_titulacion === undefined || candidato_graduar === undefined) {
+    if (!correo || !contraseña || !nombre || !matricula || !id_carrera || !semestre || telefono === undefined || doble_titulacion === undefined || candidato_graduar === undefined) {
         return res.status(400).json({ message: 'Faltan datos' });
     }
 
-    bcrypt.hash(contrasena, 10, (err, hash) => {
+    bcrypt.hash(contraseña, 10, (err, hash) => {
         if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
 
         db.query(
-            'INSERT INTO estudiante (correo, contrasena, nombre, matricula, carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)',
-            [correo, hash, nombre, matricula, carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono],
+            'INSERT INTO estudiante (correo, contraseña, nombre, matricula, id_carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)',
+            [correo, hash, nombre, matricula, id_carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono],
             (err, result) => {
                 if (err) {
                     console.error('Error al registrar alumno:', err);
@@ -53,13 +53,13 @@ app.post('/registro/alumno', (req, res) => {
 
 // Registro de administrador
 app.post('/registro/administrador', (req, res) => {
-    const { correo, contrasena, nombre } = req.body;
+    const { correo, contraseña, nombre } = req.body;
 
-    bcrypt.hash(contrasena, 10, (err, hash) => {
+    bcrypt.hash(contraseña, 10, (err, hash) => {
         if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
 
         db.query(
-            'INSERT INTO Administrador (correo, contrasena, nombre) VALUES (?, ?, ?)',
+            'INSERT INTO Administrador (correo, contraseña, nombre) VALUES (?, ?, ?)',
             [correo, hash, nombre],
             (err, result) => {
                 if (err) {
@@ -74,14 +74,14 @@ app.post('/registro/administrador', (req, res) => {
 
 // Registro de socio formador
 app.post('/registro/socio', (req, res) => {
-    const { correo, contrasena, nombre, tipo_socio, telefono_socio } = req.body;
+    const { correo, contraseña, nombre, tipo_socio, telefono_socio, redes_sociales, notificaciones_socio } = req.body;
 
-    bcrypt.hash(contrasena, 10, (err, hash) => {
+    bcrypt.hash(contraseña, 10, (err, hash) => {
         if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
 
         db.query(
-            'INSERT INTO Socio (correo, contrasena, nombre, status, tipo_socio, telefono_socio) VALUES (?, ?, ?, ?, ?, ?)',
-            [correo, hash, nombre, 'pendiente', tipo_socio, telefono_socio],
+            'INSERT INTO Socio (correo, contraseña, nombre, status, tipo_socio, telefono_socio, redes_sociales, notificaciones_socio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [correo, hash, nombre, 'pendiente', tipo_socio, telefono_socio, redes_sociales, notificaciones_socio],
             (err, result) => {
                 if (err) {
                     console.error('Error al registrar socio:', err);
@@ -119,7 +119,7 @@ app.get('/socio/pendiente', (req, res) => {
   });
 
   app.post('/login', (req, res) => {
-    const { correo, contrasena } = req.body;
+    const { correo, contraseña } = req.body;
 
     const usuarios = [
         { tabla: 'Estudiante' },
@@ -153,7 +153,7 @@ app.get('/socio/pendiente', (req, res) => {
                     return res.status(403).json({ message: 'Tu cuenta aún no ha sido aceptada' });
                 }
 
-                bcrypt.compare(contrasena, usuario.contrasena, (err, esValido) => {
+                bcrypt.compare(contraseña, usuario.contraseña, (err, esValido) => {
                     if (err) return res.status(500).json({ message: 'Error al verificar contraseña' });
 
                     if (esValido) {
@@ -173,6 +173,16 @@ app.get('/socio/pendiente', (req, res) => {
     buscarUsuario();
 });
 
+//obtener socios aprobados
+app.get('/socio/aprobados', (req, res) => {
+    db.query('SELECT id_socio, nombre, correo, tipo_socio FROM Socio WHERE status = "Aceptado"', (err, results) => {
+      if (err) {
+        console.error('Error al obtener socios Aceptados:', err);
+        return res.status(500).json({ message: 'Error al obtener socios' });
+      }
+      res.json(results);
+    });
+  });
 
 // Obtener todos los usuarios
 app.get('/administradores', (req, res) => {
@@ -197,16 +207,16 @@ app.get('/estudiantes', (req, res) => {
     console.log("✅ Conectado a MySQL");
 });
 
-// Endpoint para obtener datos de la base de datos
+
 app.get("/data", (req, res) => {
-    const sql = "SELECT * FROM status_tabla"; // Cambia 'usuarios' por tu tabla
+    const sql = "SELECT * FROM status_tabla"; 
     db.query(sql, (err, results) => {
         if (err) {
             console.error("❌ Error al obtener datos:", err);
             res.status(500).json({ error: "Error al obtener datos" });
             return;
         }
-        res.json(results); // Enviar los datos en formato JSON
+        res.json(results); 
 
     });
 });
@@ -231,6 +241,8 @@ app.put('/proyecto/:id/status', (req, res) => {
       res.json({ message: 'Status actualizado correctamente' });
     });
   });
+
+
 
   app.put('/proyecto/:id/editar', (req, res) => {
     const { id } = req.params;  // Obtener el ID del proyecto

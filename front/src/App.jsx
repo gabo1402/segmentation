@@ -6,7 +6,8 @@ import StatusSocios from "./paginasA/StatusSociosA";
 
 import Dashboard from './paginasA//DashBoardA';
 import ProyectosPos from './paginasA/ProyectosPosA';
-import AlumnosPos from './paginasA/AlumnosPosA';
+import AlumnosPos from './paginasA/AlumnosPosA'
+import SociosAprobados from './paginasA/sociosAprobadosA';;
 
 import InicioE from './paginasE/InicioE';
 import VisualizarProyectos from './paginasE/VisualizarProyectosE';
@@ -25,13 +26,14 @@ function App() {
     <>
       <Routes>
         <Route path="/" element={<Inicio />} />
-        <Route path="/agregarAdmin" element={<AgregarAdmin />} />
-        <Route path="/socios" element={<StatusSocios />} />
+        <Route path="/agregarAdminA" element={<AgregarAdmin />} />
+        <Route path="/statusSociosA" element={<StatusSocios />} />
 
 
-        <Route path="/dashBoard" element={<Dashboard />} />
-        <Route path="/proyectosPos" element={<ProyectosPos />} />
-        <Route path="/alumnosPos" element={<AlumnosPos />} />
+        <Route path="/dashBoardA" element={<Dashboard />} />
+        <Route path="/proyectosPosA" element={<ProyectosPos />} />
+        <Route path="/alumnosPosA" element={<AlumnosPos />} />
+        <Route path="/sociosAprobadosA" element={<SociosAprobados />} />
 
         <Route path="/inicioE" element={<InicioE />} />
         <Route path="/visualizarProyectos" element={<VisualizarProyectos />} />
@@ -40,6 +42,7 @@ function App() {
         <Route path="/inicioS" element={<InicioS />} />
         <Route path="/nuestrosProyectosS" element={<PostularProyecto/>} />
         <Route path="/postularProyectoS" element={<NuestrosProyectos />} />
+
         <Route path="/login" element={<Login />} />
         <Route path="/crearCuenta" element={<CrearCuenta />} />
       </Routes>

@@ -9,9 +9,10 @@ function NavCub() {
         <ul>
           <img src="./src/assets/logo_servicio.png" alt="Logo" className="logo servicio social" />
           <li><Link to="/">Inicio</Link></li>
-          <li><Link to="/dashBoard">DashBoard</Link></li>
-          <li><Link to="/proyectosPos">Proyectso Pos</Link></li>
-          <li><Link to="/alumnosPos">Alumnos Pos</Link></li>
+          <li><Link to="/dashBoardA">DashBoard</Link></li>
+          <li><Link to="/proyectosPosA">Proyectso Pos</Link></li>
+          <li><Link to="/alumnosPosA">Alumnos Pos</Link></li>
+          <li><Link to="/sociosAprobadosA">Socios</Link></li>
         </ul>
       </nav>
       <header className="top-bar">

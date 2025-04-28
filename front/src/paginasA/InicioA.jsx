@@ -7,8 +7,8 @@ function Inicio() {
   const navigate = useNavigate();
 
   const cards = [
-    { title: "Agregar Admins", route: "/agregarAdmin" },
-    { title: "Status Socios", route: "/socios" },
+    { title: "Agregar Admins", route: "/agregarAdminA" },
+    { title: "Status Socios", route: "/statusSociosA" },
   ];
 
   return (

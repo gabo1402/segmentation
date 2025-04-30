@@ -272,10 +272,93 @@ app.put('/proyecto/:id/status', (req, res) => {
 });
 
 
+//Endpoint paginas socio
+  
+  app.post("/proyecto", (req, res) => {
+    const {
+        nombre_proyecto,
+        modalidad,
+        direccion_escrita,
+        cupos_disponibles,
+        campus,  // Este es el ID del campus
+        ods,  // Este es el ID del ODS
+        problema_social,
+        vulnerabilidad_atendida,
+        edad_poblacion,
+        zona_poblacion,
+        numero_beneficiarios_proyecto,
+        objetivo_proyecto,
+        acciones_estudiantado,
+        valor_proyecto,
+        dias_actividades,
+        carreras_proyecto,
+        habilidades_alumno,
+    } = req.body;
+  
+    // Verificar si los datos requeridos están presentes
+    if (!nombre_proyecto || !modalidad || !direccion_escrita || !cupos_disponibles || !campus || !ods) {
+      return res.status(400).json({ message: "Faltan datos requeridos" });
+    }
+  
+    // Consulta SQL para insertar los datos del proyecto en la base de datos
+    const query =
+      "INSERT INTO Proyecto (status_proyecto, nombre_proyecto, modalidad, direccion_escrita, cupos_disponibles, id_campus, id_ods, problema_social, vulnerabilidad_atendida, edad_poblacion, zona_poblacion, numero_beneficiarios_proyecto, objetivo_proyecto, acciones_estudiantado, valor_proyecto, dias_actividades, carreras_proyecto, habilidades_alumno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    
+    const values = [
+      'pendiente',
+      nombre_proyecto,
+      modalidad,
+      direccion_escrita,
+      cupos_disponibles,
+      campus,  // Aquí se inserta el ID del campus
+      ods,  // Aquí se inserta el ID del ODS
+      problema_social,
+      vulnerabilidad_atendida,
+      edad_poblacion,
+      zona_poblacion,
+      numero_beneficiarios_proyecto,
+      objetivo_proyecto,
+      acciones_estudiantado,
+      valor_proyecto,
+      dias_actividades,
+      carreras_proyecto,
+      habilidades_alumno,
+    ];
+  
+    db.query(query, values, (err, result) => {
+      if (err) {
+        console.error("❌ Error al registrar el proyecto:", err);
+        return res.status(500).json({ message: "Error al registrar el proyecto" });
+      }
+  
+      res.status(200).json({ message: "Proyecto creado exitosamente" });
+      });
+  });
+    
 
+  // Obtener campus
+  app.get("/campus", (req, res) => {
+    db.query("SELECT * FROM Campus", (err, results) => {
+      if (err) {
+        console.error("❌ Error al obtener campus:", err);
+        return res.status(500).json({ message: "Error al obtener campus" });
+      }
+      res.json(results);
+    });
+  });
+  
+  // Obtener ODS
+  app.get("/ods", (req, res) => {
+    db.query("SELECT * FROM ODS", (err, results) => {
+      if (err) {
+        console.error("❌ Error al obtener ODS:", err);
+        return res.status(500).json({ message: "Error al obtener ODS" });
+      }
+      res.json(results);
+    });
+  });
 
-const PORT = 5000;
+const PORT = 5001;
 app.listen(PORT, () => {
     console.log(`✅ Server running on port ${PORT}`);
 });
-

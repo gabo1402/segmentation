@@ -1,0 +1,36 @@
+.proyectos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.proyecto-card {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.proyecto-card h3 {
+  font-size: 18px;
+  color: #333;
+}
+
+.proyecto-card p {
+  color: #555;
+}
+
+.proyecto-card button {
+  background-color: #0056b3;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.proyecto-card button:hover {
+  background-color: #003d7a;
+}

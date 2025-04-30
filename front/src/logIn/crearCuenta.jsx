@@ -90,7 +90,7 @@ export default function CrearCuenta() {
     let body = {};
 
     if (tipoUsuario === "estudiante") {
-      url = "http://localhost:5000/registro/alumno";
+      url = "http://localhost:5001/registro/alumno";
       body = {
         correo: email,
         contraseña: password,
@@ -104,7 +104,7 @@ export default function CrearCuenta() {
         telefono: telefono                    
       };
     } else if (tipoUsuario === "socio") {
-      url = "http://localhost:5000/registro/socio";
+      url = "http://localhost:5001/registro/socio";
       body = {
         correo: email,
         contraseña: password,

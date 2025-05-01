@@ -1,0 +1,66 @@
+/* InicioSo.module.css */
+.cube {
+    background-color: #f7f9fc;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    color: #0033a0;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  button {
+    background-color: #0033a0;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin: 20px 0;
+  }
+  
+  button:hover {
+    background-color: #005bb5;
+  }
+  
+  .errorMsg {
+    color: red;
+    text-align: center;
+    font-size: 16px;
+  }
+  
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .table th, .table td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+  }
+  
+  .table th {
+    background-color: #0033a0;
+    color: white;
+  }
+  
+  .respuestaButton {
+    background-color: #4caf50;
+    color: white;
+    padding: 5px 15px;
+    font-size: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  
+  .respuestaButton:hover {
+    background-color: #45a049;
+  }
+  

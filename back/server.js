@@ -464,20 +464,140 @@ app.put('/proyecto/:id/status', (req, res) => {
     });
   });
 
-  // Obtener proyectos de un socio específico
-  app.get('/proyectos/:id_socio', (req, res) => {
-    const { id_socio } = req.params;
+  // Obtener estudiantes postulados a un proyecto específico
+// 🚀 MySQL 8+: la agrupación se resuelve en la propia consulta
 
-    db.query('SELECT * FROM Proyecto WHERE id_socio = ?', [id_socio], (err, results) => {
-      if (err) {
-        console.error('Error al obtener proyectos:', err);
-        return res.status(500).json({ message: 'Error al obtener proyectos' });
-      }
+app.get('/proyecto/:id_socio/postulados', (req, res) => {
+  const { id_socio } = req.params;
 
-      res.json(results);
-    });
+  const query = `
+SELECT
+  P.id_proyecto,
+  P.nombre_proyecto,
+  JSON_ARRAYAGG(
+    JSON_OBJECT(
+      'id_estudiante', E.id_estudiante,
+      'estudiante_nombre', E.nombre,
+      'estudiante_correo', E.correo,
+      'estudiante_carrera', C.nombre_carrera,
+      'fecha_postulacion_estudiante', Po.fecha_postulacion_estudiante,
+      'expectativa', Po.expectativa,
+      'razon', Po.razon,
+      'motivo', Po.motivo
+    )
+  ) AS alumnos_postulados
+FROM Proyecto P
+JOIN Postulacion Po ON P.id_proyecto = Po.id_proyecto
+JOIN Estudiante E ON Po.id_estudiante = E.id_estudiante
+JOIN carrera C ON E.id_carrera = C.id_carrera
+WHERE P.id_socio = ? AND Po.status = 'pendiente'
+GROUP BY P.id_proyecto, P.nombre_proyecto;
+  `;
+
+  db.query(query, [id_socio], (err, rows) => {
+    if (err) {
+      console.error('❌ Error al obtener estudiantes postulados:', err);
+      return res.status(500).json({ message: 'Error al obtener estudiantes postulados' });
+    }
+    res.json(rows);
   });
+});
 
+
+// app.get('/proyecto/:id_socio/postulados', (req, res) => {
+//   const { id_socio } = req.params;
+
+//   const query = `
+//     SELECT
+//       P.id_proyecto,
+//       P.nombre_proyecto,
+//       JSON_ARRAYAGG(
+//         JSON_OBJECT(
+//           'id_estudiante',     E.id_estudiante,
+//           'estudiante_nombre', E.nombre,
+//           'estudiante_correo', E.correo
+//         )
+//       ) AS alumnos_postulados
+//     FROM Proyecto P
+//     JOIN Postulacion Po ON P.id_proyecto = Po.id_proyecto
+//     JOIN Estudiante  E  ON Po.id_estudiante = E.id_estudiante
+//     WHERE P.id_socio = ? AND Po.status = 'pendiente'
+//     GROUP BY P.id_proyecto, P.nombre_proyecto;
+//   `;
+
+//   db.query(query, [id_socio], (err, rows) => {
+//     if (err) {
+//       console.error('❌ Error al obtener estudiantes postulados:', err);
+//       return res.status(500).json({ message: 'Error al obtener estudiantes postulados' });
+//     }
+//     // rows ya tiene la estructura [{ id_proyecto, nombre_proyecto, alumnos_postulados: [...] }, ...]
+//     res.json(rows);
+//   });
+// });
+
+
+app.put('/postulacion/:id_proyecto/:id_estudiante', (req, res) => {
+  const { id_proyecto, id_estudiante } = req.params;
+  const { status } = req.body;
+
+  // Verificar que los parámetros sean válidos
+  if (!id_proyecto || !id_estudiante) {
+    return res.status(400).json({ message: 'Faltan parámetros para actualizar la postulación' });
+  }
+
+  // ✓ Whitelist de estados válidos
+  const estadosValidos = ['pendiente', 'aceptado', 'rechazado'];
+  if (!estadosValidos.includes(status)) {
+    return res.status(400).json({ message: 'Estado no permitido' });
+  }
+
+  const query = `
+    UPDATE Postulacion
+       SET status = ?
+     WHERE id_proyecto = ? AND id_estudiante = ?;
+  `;
+
+  db.query(query, [status, id_proyecto, id_estudiante], (err, result) => {
+    if (err) {
+      console.error('❌ Error al actualizar el status de la postulación:', err);
+      return res.status(500).json({ message: 'Error al actualizar el status' });
+    }
+    res.json({ message: 'Status actualizado correctamente' });
+  });
+});
+
+
+app.get('/proyectos/:id_socio', (req, res) => {
+  const { id_socio } = req.params;
+  const { status } = req.query; // Obtiene el status de la consulta (opcional)
+
+  let query = `
+    SELECT P.*, 
+           E.nombre AS estudiante_nombre, 
+           E.correo AS estudiante_correo
+    FROM Proyecto P
+    LEFT JOIN Postulacion Po ON P.id_proyecto = Po.id_proyecto
+    LEFT JOIN Estudiante E ON Po.id_estudiante = E.id_estudiante
+    WHERE P.id_socio = ?
+  `;
+
+  const queryParams = [id_socio];
+
+  // Si el status es "todos", no agregues el filtro por estado
+  if (status && status !== 'todos') {
+    query += ' AND P.status_proyecto = ?';
+    queryParams.push(status);
+  }
+
+  db.query(query, queryParams, (err, results) => {
+    if (err) {
+      console.error('Error al obtener proyectos:', err);
+      return res.status(500).json({ message: 'Error al obtener proyectos' });
+    }
+
+    res.json(results);
+  });
+});
 
 const PORT = 5001;
 app.listen(PORT, () => {

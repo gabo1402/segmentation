@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import NavCub from '../componentes/navegacionS';
-import styles from './NuestrosProyectosS.module.css';  // Importa los estilos si los tienes
+import styles from './NuestrosProyectosS.module.css';
 import { jwtDecode } from 'jwt-decode';
-import ModalProyecto from './ModalProyecto';  // Importa el modal
+import ModalProyecto from './ModalProyecto';
 
 
 function NuestrosProyectosS() {
-  const [proyectos, setProyectos] = useState([]);  // Para almacenar los proyectos
+  const [proyectos, setProyectos] = useState([]);
   const [error, setError] = useState(null);
   const [proyectoSeleccionado, setProyectoSeleccionado] = useState(null); // Para almacenar el proyecto seleccionado
-
+  const [statusFilter, setStatusFilter] = useState('todos'); // Para almacenar el filtro de status
 
   // Obtener el ID del socio del localStorage
   const getIdSocio = () => {
@@ -37,7 +37,7 @@ function NuestrosProyectosS() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5001/proyectos/${id_socio}`);
+        const response = await fetch(`http://localhost:5001/proyectos/${id_socio}?status=${statusFilter}`);
         const data = await response.json();
 
         if (response.ok) {
@@ -52,7 +52,7 @@ function NuestrosProyectosS() {
     };
 
     fetchProyectos();
-  }, []);  // Solo se ejecuta una vez cuando el componente se monta
+  }, [statusFilter]);  // Ejecutar cada vez que cambie el filtro
 
   const handleCardClick = (proyecto) => {
     setProyectoSeleccionado(proyecto); // Establece el proyecto seleccionado
@@ -62,12 +62,24 @@ function NuestrosProyectosS() {
     setProyectoSeleccionado(null); // Cierra el modal
   };
 
+  // Cambiar el filtro de status
+  const handleFilterChange = (e) => {
+    setStatusFilter(e.target.value);
+  };
+
   return (
     <div className="cube">
       <NavCub />
       <h1>Nuestros proyectos</h1>
 
       {error && <p>{error}</p>}
+
+      {/* Filtro por status */}
+      <select onChange={handleFilterChange} value={statusFilter}>
+        <option value="todos">Todos</option>
+        <option value="pendiente">Pendientes</option>
+        <option value="aceptado">Aceptados</option>
+      </select>
 
       <div className={styles.proyectosContainer}>
         {proyectos.length > 0 ? (
@@ -79,7 +91,7 @@ function NuestrosProyectosS() {
             >
               {proyecto.img_proyecto && (
                 <img
-                  src={`http://localhost:5001${proyecto.img_proyecto}`}  // La ruta debe ser accesible desde el frontend
+                  src={`http://localhost:5001${proyecto.img_proyecto}`}
                   alt={proyecto.nombre_proyecto}
                   className={styles.proyectoImage}
                 />

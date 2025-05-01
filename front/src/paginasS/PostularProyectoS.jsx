@@ -1,4 +1,5 @@
 import React from 'react';
+import { jwtDecode } from 'jwt-decode';
 import NavCub from '../componentes/navegacionS';
 import styles from './PostularProyectoS.module.css';
 import { useState , useEffect} from "react";
@@ -39,6 +40,22 @@ export default function PostularProyectoS() {
     fetchData();
   }, []);
 
+  // Obtener el ID del socio del localStorage
+  const getIdSocio = () => {
+    const token = localStorage.getItem("jwt");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        return decoded.id;
+      } catch (error) {
+        console.error("Error al decodificar el token:", error);
+        return null;
+      }
+    }
+    return null;
+  };
+  
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!nombreProyecto || !direccionEscrita || !problemaSocial || !vulnerabilidadAtendida || !objetivoProyecto || !accionesEstudiantado || !valorProyecto || !habilidadesAlumno) {
@@ -46,7 +63,15 @@ export default function PostularProyectoS() {
       return;
     }
 
+    const id_socio = getIdSocio(); // Obtener el id_socio
+
+    if (!id_socio) {
+      setError("No se pudo obtener el ID del socio.");
+      return;
+    }
+
     const proyectoData = {
+      id_socio, // Agregar el ID del socio
       nombre_proyecto: nombreProyecto,
       modalidad,
       direccion_escrita: direccionEscrita,

@@ -359,6 +359,7 @@ app.put('/proyecto/:id/status', (req, res) => {
   
   app.post("/proyecto", (req, res) => {
     const {
+        id_socio, // Obtener el id_socio
         nombre_proyecto,
         modalidad,
         direccion_escrita,
@@ -385,9 +386,10 @@ app.put('/proyecto/:id/status', (req, res) => {
   
     // Consulta SQL para insertar los datos del proyecto en la base de datos
     const query =
-      "INSERT INTO Proyecto (status_proyecto, nombre_proyecto, modalidad, direccion_escrita, cupos_disponibles, id_campus, id_ods, problema_social, vulnerabilidad_atendida, edad_poblacion, zona_poblacion, numero_beneficiarios_proyecto, objetivo_proyecto, acciones_estudiantado, valor_proyecto, dias_actividades, carreras_proyecto, habilidades_alumno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO Proyecto (id_socio, status_proyecto, nombre_proyecto, modalidad, direccion_escrita, cupos_disponibles, id_campus, id_ods, problema_social, vulnerabilidad_atendida, edad_poblacion, zona_poblacion, numero_beneficiarios_proyecto, objetivo_proyecto, acciones_estudiantado, valor_proyecto, dias_actividades, carreras_proyecto, habilidades_alumno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     const values = [
+      id_socio, // Guardar el ID del socio
       'pendiente',
       nombre_proyecto,
       modalidad,

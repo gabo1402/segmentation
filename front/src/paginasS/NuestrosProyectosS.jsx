@@ -1,7 +1,7 @@
 import React from 'react';
 import NavCub from '../componentes/navegacionS';
 
-function NuestrosProyectos() {
+function NuestrosProyectosS() {
     return (
         <div className="cube">
           <NavCub />
@@ -10,4 +10,4 @@ function NuestrosProyectos() {
     );
 }
 
-export default NuestrosProyectos;
+export default NuestrosProyectosS;

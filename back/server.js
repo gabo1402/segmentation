@@ -3,6 +3,7 @@ const mysql = require("mysql2");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv")
+const jwt = require('jsonwebtoken');
 
 dotenv.config();
 
@@ -26,6 +27,24 @@ db.connect((err) => {
     console.log("✅ Conectado a MySQL");
 });
 
+// Middleware para verificar el JWT
+const verifyToken = (req, res, next) => {
+  const token = req.header('Authorization')?.split(' ')[1]; // Obtén el token del encabezado Authorization
+
+  if (!token) {
+    return res.status(401).json({ message: 'Acceso denegado, no se proporcionó el token' });
+  }
+
+  try {
+    const verified = jwt.verify(token, process.env.JWT_SECRET); // Verifica el token
+    req.user = verified; // Guarda la información decodificada del token
+    next(); // Llama al siguiente middleware o ruta
+  } catch (error) {
+    res.status(400).json({ message: 'Token inválido' });
+  }
+};
+
+
 // Registro de alumno
 app.post('/registro/alumno', (req, res) => {
     const { correo, contraseña, nombre, matricula, id_carrera, semestre, id_campus, doble_titulacion, candidato_graduar, telefono } = req.body;
@@ -33,21 +52,43 @@ app.post('/registro/alumno', (req, res) => {
     if (!correo || !contraseña || !nombre || !matricula || !id_carrera || !semestre || telefono === undefined || doble_titulacion === undefined || candidato_graduar === undefined) {
         return res.status(400).json({ message: 'Faltan datos' });
     }
+    
+    // Validar que el teléfono sea numérico y tenga al menos 10 caracteres
+    const phoneRegex = /^[0-9]{10,}$/;
+    if (!phoneRegex.test(telefono)) {
+        return res.status(400).json({ message: 'El teléfono debe ser numérico y tener al menos 10 dígitos' });
+    }
 
-    bcrypt.hash(contraseña, 10, (err, hash) => {
-        if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
+    // Validar que el correo no exista
+    db.query('SELECT * FROM Estudiante WHERE correo = ?', [correo], (err, result) => {
+        if (err) {
+        return res.status(500).json({ message: 'Error en la base de datos' });
+        }
 
-        db.query(
-            'INSERT INTO estudiante (correo, contraseña, nombre, matricula, id_carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)',
-            [correo, hash, nombre, matricula, id_carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono],
-            (err, result) => {
-                if (err) {
-                    console.error('Error al registrar alumno:', err);
-                    return res.status(500).json({ message: 'Error al registrar al alumno' });
-                }
-                res.json({ message: 'Alumno registrado exitosamente' });
-            }
-        );
+        if (result.length > 0) {
+        return res.status(400).json({ message: 'El correo electrónico ya está registrado.' });
+        }
+
+        // Si el correo no existe, validar la contraseña
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(contraseña)) {
+        return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.' });
+        }
+        bcrypt.hash(contraseña, 10, (err, hash) => {
+            if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
+
+            db.query(
+                'INSERT INTO estudiante (correo, contraseña, nombre, matricula, id_carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)',
+                [correo, hash, nombre, matricula, id_carrera, semestre, doble_titulacion, id_campus, candidato_graduar, telefono],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error al registrar alumno:', err);
+                        return res.status(500).json({ message: 'Error al registrar al alumno' });
+                    }
+                    res.json({ message: 'Alumno registrado exitosamente' });
+        
+            });
+        });
     });
 });
 
@@ -55,20 +96,36 @@ app.post('/registro/alumno', (req, res) => {
 app.post('/registro/administrador', (req, res) => {
     const { correo, contraseña, nombre } = req.body;
 
-    bcrypt.hash(contraseña, 10, (err, hash) => {
-        if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
+    // Validar que el correo no exista
+    db.query('SELECT * FROM Administrador WHERE correo = ?', [correo], (err, result) => {
+        if (err) {
+        return res.status(500).json({ message: 'Error en la base de datos' });
+        }
 
-        db.query(
-            'INSERT INTO Administrador (correo, contraseña, nombre) VALUES (?, ?, ?)',
-            [correo, hash, nombre],
-            (err, result) => {
-                if (err) {
-                    console.error('Error al registrar administrador:', err);
-                    return res.status(500).json({ message: 'Error al registrar administrador' });
-                }
-                res.json({ message: 'Administrador registrado exitosamente' });
-            }
-        );
+        if (result.length > 0) {
+        return res.status(400).json({ message: 'El correo electrónico ya está registrado.' });
+        }
+
+        // Si el correo no existe, validar la contraseña
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(contraseña)) {
+        return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.' });
+        }
+
+        bcrypt.hash(contraseña, 10, (err, hash) => {
+            if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
+
+            db.query(
+                'INSERT INTO Administrador (correo, contraseña, nombre) VALUES (?, ?, ?)',
+                [correo, hash, nombre],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error al registrar administrador:', err);
+                        return res.status(500).json({ message: 'Error al registrar administrador' });
+                    }
+                    res.json({ message: 'Administrador registrado exitosamente' });
+            });
+        });
     });
 });
 
@@ -76,20 +133,36 @@ app.post('/registro/administrador', (req, res) => {
 app.post('/registro/socio', (req, res) => {
     const { correo, contraseña, nombre, tipo_socio, telefono_socio, redes_sociales, notificaciones_socio } = req.body;
 
-    bcrypt.hash(contraseña, 10, (err, hash) => {
-        if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
+    // Validar que el correo no exista
+    db.query('SELECT * FROM Socio WHERE correo = ?', [correo], (err, result) => {
+        if (err) {
+        return res.status(500).json({ message: 'Error en la base de datos' });
+        }
 
-        db.query(
-            'INSERT INTO Socio (correo, contraseña, nombre, status, tipo_socio, telefono_socio, redes_sociales, notificaciones_socio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [correo, hash, nombre, 'pendiente', tipo_socio, telefono_socio, redes_sociales, notificaciones_socio],
-            (err, result) => {
-                if (err) {
-                    console.error('Error al registrar socio:', err);
-                    return res.status(500).json({ message: 'Error al registrar socio' });
-                }
-                res.json({ message: 'Socio registrado exitosamente' });
-            }
-        );
+        if (result.length > 0) {
+        return res.status(400).json({ message: 'El correo electrónico ya está registrado.' });
+        }
+
+        // Si el correo no existe, validar la contraseña
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        if (!passwordRegex.test(contraseña)) {
+        return res.status(400).json({ message: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.' });
+        }
+
+        bcrypt.hash(contraseña, 10, (err, hash) => {
+            if (err) return res.status(500).json({ message: 'Error al encriptar contraseña' });
+
+            db.query(
+                'INSERT INTO Socio (correo, contraseña, nombre, status, tipo_socio, telefono_socio, redes_sociales, notificaciones_socio) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                [correo, hash, nombre, 'pendiente', tipo_socio, telefono_socio, redes_sociales, notificaciones_socio],
+                (err, result) => {
+                    if (err) {
+                        console.error('Error al registrar socio:', err);
+                        return res.status(500).json({ message: 'Error al registrar socio' });
+                    }
+                    res.json({ message: 'Socio registrado exitosamente' });
+            });
+        });
     });
 });
 
@@ -118,60 +191,70 @@ app.get('/socio/pendiente', (req, res) => {
     });
   });
 
+  // Ruta de login
   app.post('/login', (req, res) => {
     const { correo, contraseña } = req.body;
-
+  
     const usuarios = [
-        { tabla: 'Estudiante' },
-        { tabla: 'Administrador' },
-        { tabla: 'Socio' }
+      { tabla: 'Estudiante' },
+      { tabla: 'Administrador' },
+      { tabla: 'Socio' }
     ];
-
+  
     let index = 0;
-
+  
     const buscarUsuario = () => {
-        if (index >= usuarios.length) {
-            return res.status(401).json({ message: 'Credenciales incorrectas' });
+      if (index >= usuarios.length) {
+        return res.status(401).json({ message: 'Credenciales incorrectas' });
+      }
+  
+      const { tabla } = usuarios[index];
+  
+      db.query(`SELECT * FROM ${tabla} WHERE correo = ?`, [correo], (err, results) => {
+        if (err) {
+          console.error(`❌ Error buscando en ${tabla}:`, err);
+          return res.status(500).json({ message: 'Error del servidor' });
         }
-
-        const { tabla } = usuarios[index];
-
-        db.query(`SELECT * FROM ${tabla} WHERE correo = ?`, [correo], (err, results) => {
-            if (err) {
-                console.error(`❌ Error buscando en ${tabla}:`, err);
-                return res.status(500).json({ message: 'Error del servidor' });
-            }
-
-            if (results.length === 0) {
-                index++;
-                buscarUsuario();
+  
+        if (results.length === 0) {
+          index++;
+          buscarUsuario();
+        } else {
+          const usuario = results[0];
+  
+          // Si es socio y su status no es "aceptado", rechazar login
+          if (tabla === 'Socio' && usuario.status !== 'aceptado') {
+            return res.status(403).json({ message: 'Tu cuenta aún no ha sido aceptada' });
+          }
+  
+          bcrypt.compare(contraseña, usuario.contraseña, (err, esValido) => {
+            if (err) return res.status(500).json({ message: 'Error al verificar contraseña' });
+  
+            if (esValido) {
+              // Generar JWT
+              const token = jwt.sign(
+                { id: usuario.id_socio, tipo: tabla.toLowerCase() }, // Datos del usuario a incluir
+                process.env.JWT_SECRET, // Llave secreta para firmar el token
+                { expiresIn: '1h' } // El token expirará en 1 hora
+              );
+  
+              return res.json({
+                message: 'Login exitoso',
+                token, // Enviar el token al frontend
+                tipo: tabla.toLowerCase(),
+                datos: usuario
+              });
             } else {
-                const usuario = results[0];
-
-                // Si es socio y su status no es "aceptado", rechazar login
-                if (tabla === 'Socio' && usuario.status !== 'aceptado') {
-                    return res.status(403).json({ message: 'Tu cuenta aún no ha sido aceptada' });
-                }
-
-                bcrypt.compare(contraseña, usuario.contraseña, (err, esValido) => {
-                    if (err) return res.status(500).json({ message: 'Error al verificar contraseña' });
-
-                    if (esValido) {
-                        return res.json({
-                            message: 'Login exitoso',
-                            tipo: tabla.toLowerCase(), 
-                            datos: usuario
-                        });
-                    } else {
-                        return res.status(401).json({ message: 'Contraseña incorrecta' });
-                    }
-                });
+              return res.status(401).json({ message: 'Contraseña incorrecta' });
             }
-        });
+          });
+        }
+      });
     };
-
+  
     buscarUsuario();
-});
+  });
+  
 
 //obtener socios aprobados
 app.get('/socio/aprobados', (req, res) => {

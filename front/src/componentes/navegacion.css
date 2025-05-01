@@ -62,3 +62,33 @@
 .username {
     margin-left: 10px;
 }
+
+/* navegacion.css */
+.nav-bar-socio {
+    width: 200px;
+    background-color: #fbf6f6;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    border-right: 1px solid #dcdcdc;
+  }
+  
+  /* Uso de un nombre específico */
+  .top-bar-socio {
+    background-color: #fbf6f6;
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
+    position: fixed;
+    width: calc(100% - 220px);
+    top: 0;
+    left: 240px;
+    height: 60px;
+    color: black;
+    border-bottom: 1px solid #dcdcdc;
+  }
+  

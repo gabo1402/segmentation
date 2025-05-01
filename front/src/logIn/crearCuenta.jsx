@@ -140,8 +140,8 @@ export default function CrearCuenta() {
   };
 
   return (
-    <div className="container">
-  <div className="form-box">
+    <div className="login-container">
+  <div className="login-form-box">
     <h1 className="title">Crear cuenta</h1>
 
     <label>Tipo de usuario</label>

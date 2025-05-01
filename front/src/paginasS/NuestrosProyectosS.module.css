@@ -1,0 +1,41 @@
+/* NuestrosProyectosS.module.css */
+.proyectoCard {
+    /* Asegúrate de que la card tenga un tamaño adecuado */
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    margin: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+  }
+  
+  .proyectoCard:hover {
+    transform: scale(1.05);
+  }
+  
+  .proyectoImage {
+    /* Asegúrate de que la imagen tenga un tamaño adecuado y no se deforme */
+    width: 100%;  /* Hace que la imagen ocupe el 100% del ancho disponible */
+    height: auto;  /* Mantiene la relación de aspecto */
+    border-radius: 8px;
+    object-fit: cover;  /* Ajusta la imagen sin deformarla */
+  }
+  
+  .proyectosContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .proyectoCard h2 {
+    margin-top: 0;
+    color: #0033a0;
+  }
+  
+  .proyectoCard p {
+    color: #555;
+  }
+  

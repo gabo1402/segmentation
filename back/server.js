@@ -4,12 +4,17 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const dotenv = require("dotenv")
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
 
 dotenv.config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Configura el servidor para servir archivos estáticos desde la carpeta 'uploads'
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 const db = mysql.createConnection({
     host: process.env.DB_HOST,
@@ -356,8 +361,21 @@ app.put('/proyecto/:id/status', (req, res) => {
 
 
 //Endpoint paginas socio
+
+
+  // Configuración de Multer para almacenamiento de archivos
+  const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, './uploads/');  // Asegúrate de crear la carpeta 'uploads' en tu servidor
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));  // Usa el timestamp para el nombre del archivo
+    }
+  });
+
+  const upload = multer({ storage: storage });
   
-  app.post("/proyecto", (req, res) => {
+  app.post("/proyecto", upload.single('imagen'), (req, res) => {
     const {
         id_socio, // Obtener el id_socio
         nombre_proyecto,
@@ -379,6 +397,8 @@ app.put('/proyecto/:id/status', (req, res) => {
         habilidades_alumno,
     } = req.body;
   
+    const img_proyecto = req.file ? `/uploads/${req.file.filename}` : null;  // La URL de la imagen cargada
+    
     // Verificar si los datos requeridos están presentes
     if (!nombre_proyecto || !modalidad || !direccion_escrita || !cupos_disponibles || !campus || !ods) {
       return res.status(400).json({ message: "Faltan datos requeridos" });
@@ -386,11 +406,12 @@ app.put('/proyecto/:id/status', (req, res) => {
   
     // Consulta SQL para insertar los datos del proyecto en la base de datos
     const query =
-      "INSERT INTO Proyecto (id_socio, status_proyecto, nombre_proyecto, modalidad, direccion_escrita, cupos_disponibles, id_campus, id_ods, problema_social, vulnerabilidad_atendida, edad_poblacion, zona_poblacion, numero_beneficiarios_proyecto, objetivo_proyecto, acciones_estudiantado, valor_proyecto, dias_actividades, carreras_proyecto, habilidades_alumno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+      "INSERT INTO Proyecto (id_socio, status_proyecto, img_proyecto,  nombre_proyecto, modalidad, direccion_escrita, cupos_disponibles, id_campus, id_ods, problema_social, vulnerabilidad_atendida, edad_poblacion, zona_poblacion, numero_beneficiarios_proyecto, objetivo_proyecto, acciones_estudiantado, valor_proyecto, dias_actividades, carreras_proyecto, habilidades_alumno) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     
     const values = [
       id_socio, // Guardar el ID del socio
       'pendiente',
+      img_proyecto,
       nombre_proyecto,
       modalidad,
       direccion_escrita,
@@ -442,6 +463,21 @@ app.put('/proyecto/:id/status', (req, res) => {
       res.json(results);
     });
   });
+
+  // Obtener proyectos de un socio específico
+  app.get('/proyectos/:id_socio', (req, res) => {
+    const { id_socio } = req.params;
+
+    db.query('SELECT * FROM Proyecto WHERE id_socio = ?', [id_socio], (err, results) => {
+      if (err) {
+        console.error('Error al obtener proyectos:', err);
+        return res.status(500).json({ message: 'Error al obtener proyectos' });
+      }
+
+      res.json(results);
+    });
+  });
+
 
 const PORT = 5001;
 app.listen(PORT, () => {

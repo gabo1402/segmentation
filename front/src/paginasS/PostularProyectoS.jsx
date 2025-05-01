@@ -5,6 +5,7 @@ import styles from './PostularProyectoS.module.css';
 import { useState , useEffect} from "react";
 
 export default function PostularProyectoS() {
+  const [imagen, setImagen] = useState(null); // Para almacenar la imagen seleccionada
   const [nombreProyecto, setNombreProyecto] = useState("");
   const [modalidad, setModalidad] = useState("Presencial");
   const [direccionEscrita, setDireccionEscrita] = useState("");
@@ -58,7 +59,7 @@ export default function PostularProyectoS() {
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!nombreProyecto || !direccionEscrita || !problemaSocial || !vulnerabilidadAtendida || !objetivoProyecto || !accionesEstudiantado || !valorProyecto || !habilidadesAlumno) {
+    if (!imagen || !nombreProyecto || !direccionEscrita || !problemaSocial || !vulnerabilidadAtendida || !objetivoProyecto || !accionesEstudiantado || !valorProyecto || !habilidadesAlumno) {
       setError("Por favor, completa todos los campos.");
       return;
     }
@@ -70,38 +71,36 @@ export default function PostularProyectoS() {
       return;
     }
 
-    const proyectoData = {
-      id_socio, // Agregar el ID del socio
-      nombre_proyecto: nombreProyecto,
-      modalidad,
-      direccion_escrita: direccionEscrita,
-      cupos_disponibles: cuposDisponibles,
-      campus,  // Enviar el ID del campus
-      ods,  // Enviar el ID del ODS
-      problema_social: problemaSocial,
-      vulnerabilidad_atendida: vulnerabilidadAtendida,
-      edad_poblacion: edadPoblacion,
-      zona_poblacion: zonaPoblacion,
-      numero_beneficiarios_proyecto: numeroBeneficiarios,
-      objetivo_proyecto: objetivoProyecto,
-      acciones_estudiantado: accionesEstudiantado,
-      valor_proyecto: valorProyecto,
-      dias_actividades: diasActividades,
-      carreras_proyecto: carrerasProyecto,
-      habilidades_alumno: habilidadesAlumno,
-    };
+    const proyectoData = new FormData();  // Usamos FormData para enviar los datos y la imagen
+
+    proyectoData.append("id_socio", id_socio);
+    proyectoData.append("imagen", imagen);  // Agregar la imagen al FormData
+    proyectoData.append("nombre_proyecto", nombreProyecto);
+    proyectoData.append("modalidad", modalidad);
+    proyectoData.append("direccion_escrita", direccionEscrita);
+    proyectoData.append("cupos_disponibles", cuposDisponibles);
+    proyectoData.append("campus", campus);
+    proyectoData.append("ods", ods);
+    proyectoData.append("problema_social", problemaSocial);
+    proyectoData.append("vulnerabilidad_atendida", vulnerabilidadAtendida);
+    proyectoData.append("edad_poblacion", edadPoblacion);
+    proyectoData.append("zona_poblacion", zonaPoblacion);
+    proyectoData.append("numero_beneficiarios_proyecto", numeroBeneficiarios);
+    proyectoData.append("objetivo_proyecto", objetivoProyecto);
+    proyectoData.append("acciones_estudiantado", accionesEstudiantado);
+    proyectoData.append("valor_proyecto", valorProyecto);
+    proyectoData.append("dias_actividades", diasActividades);
+    proyectoData.append("carreras_proyecto", carrerasProyecto);
+    proyectoData.append("habilidades_alumno", habilidadesAlumno);
 
     try {
       const response = await fetch("http://localhost:5001/proyecto", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(proyectoData),
+        body: proyectoData,  // Enviar FormData con todos los datos, incluida la imagen
       });
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         alert("Proyecto creado exitosamente!");
       } else {
@@ -121,6 +120,16 @@ export default function PostularProyectoS() {
         <h1 className={styles.title}>Añadir nuevo proyecto</h1>
 
         <form onSubmit={handleSubmit}>
+
+        {/* ---- Imagen ---- */}
+          <label className={styles.label}>Imagen del proyecto</label>
+          <input
+            className={styles.input}
+            type="file"
+            accept="image/*"
+            onChange={(e) => setImagen(e.target.files[0])} // Guarda el archivo de imagen
+          />
+
           {/* ---- Nombre ---- */}
           <label className={styles.label}>Nombre del proyecto</label>
           <input

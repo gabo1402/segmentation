@@ -9,14 +9,14 @@ body {
     margin: 0;
   }
   
-  .container {
+  .login-container{
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
   }
   
-  .form-box {
+  .login-form-box{
     background: #f9f4ee;
     padding: 30px;
     border-radius: 10px;

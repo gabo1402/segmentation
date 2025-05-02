@@ -1,0 +1,75 @@
+/* InicioSo.module.css */
+.cube {
+  background-color: #f7f9fc;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #0033a0; /* Color azul consistente con otros componentes */
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+button {
+  background-color: #0033a0;
+  color: white;
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 20px 0;
+}
+
+button:hover {
+  background-color: #005bb5; /* Cambio de color en hover */
+}
+
+.errorMsg {
+  color: red;
+  text-align: center;
+  font-size: 16px;
+}
+
+.proyectosContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.proyectoCard {
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  margin: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.proyectoCard:hover {
+  transform: scale(1.05); /* Efecto hover para cards */
+}
+
+.proyectoImage {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.proyectoCard h2 {
+  color: #0033a0;
+  margin-top: 15px;
+  font-size: 1.5rem;
+}
+
+.proyectoCard p {
+  color: #555;
+  font-size: 14px;
+}

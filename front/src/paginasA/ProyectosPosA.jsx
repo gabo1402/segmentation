@@ -6,31 +6,72 @@ import './tablasA.css';
 function ProyectosPos() {
     const [proyectos, setProyectos] = useState([]);
     const [columnasVisibles, setColumnasVisibles] = useState([]);
-    const [celdaSeleccionada, setCeldaSeleccionada] = useState(null); // { filaId, columna }
+    const [celdaSeleccionada, setCeldaSeleccionada] = useState(null); 
     const [valorEditado, setValorEditado] = useState('');
     const [valorOriginal, setValorOriginal] = useState('');
+    const [filteredText, setFilteredText] = useState('');
+    const columnasFijas = ['nombre', 'nombre_proyecto'];
+
 
     const columnasDisponibles = {
-        id_proyecto: 'ID',
-        nombre_proyecto: 'Nombre',
-        status_proyecto: 'Status',
-        id_campus: 'Campus',
-        grupo: 'Grupo',
-        fecha_postulacion_proyecto: 'Fecha Postulación',
+        id_proyecto: 'ID Proyecto',
+        nombre: 'nombre socio',
+        status_proyecto: 'Status Proyecto',
         crn: 'CRN',
+        campus: 'Campus',
+        grupo: 'Grupo',
         clave_materia: 'Clave Materia',
+        id_periodo: 'ID Periodo',
+        fecha_postulacion_proyecto: 'Fecha Postulación Proyecto',
+        nombre_proyecto: 'Nombre Proyecto',
         problema_social: 'Problema Social',
-        vulnerabilidad_atendida: 'Vulnerabilidad',
-        numero_beneficiarios_proyecto: 'Beneficiarios',
-        objetivo_proyecto: 'Objetivo',
+        vulnerabilidad_atendida: 'Vulnerabilidad Atendida',
+        edad_poblacion: 'Edad Población',
+        zona_poblacion: 'Zona Población',
+        numero_beneficiarios_proyecto: 'Número Beneficiarios Proyecto',
+        objetivo_proyecto: 'Objetivo Proyecto',
+        acciones_estudiantado: 'Acciones Estudiantado',
+        producto_servicio_entregar: 'Producto/Servicio a Entregar',
+        entregable_esperado: 'Entregable Esperado',
+        medida_impacto: 'Medida Impacto',
+        nuevo_reconocimiento: 'Nuevo Reconocimiento',
+        nombre_ods: 'Nombre ODS 1',
+        id_ods_2: 'ID ODS 2',
+        dias_actividades: 'Días Actividades',
+        carreras_proyecto: 'Carreras Proyecto',
+        habilidades_alumno: 'Habilidades Alumno',
         modalidad: 'Modalidad',
-        cupos_proyecto: 'Cupos',
-        region_proyecto: 'Región',
+        direccion_escrita: 'Dirección Escrita',
+        valor_proyecto: 'Valor Proyecto',
+        periodo_repetido: 'Periodo Repetido',
+        induccion_es: 'Inducción ES',
+        propuesta_semana_tec: 'Propuesta Semana TEC',
+        propuesta_inmersion_social: 'Propuesta Inmersión Social',
+        propuesta_bloque: 'Propuesta Bloque',
+        indicaciones_campus: 'Indicaciones Campus',
+        enlace_maps: 'Enlace Maps',
+        entrevista: 'Entrevista',
+        pregunta_descarte: 'Pregunta Descarte',
+        conocimiento_horarios: 'Conocimiento Horarios',
+        areas: 'Áreas',
+        nombre_grupo_whatsapp: 'Nombre Grupo WhatsApp',
+        enlace_whatsapp: 'Enlace WhatsApp',
+        status_grupo_whatsapp: 'Status Grupo WhatsApp',
+        alumnos_postulados: 'Alumnos Postulados',
+        alumnos_aceptados: 'Alumnos Aceptados',
+        cupos_disponibles: 'Cupos Disponibles',
+        region_proyecto: 'Región Proyecto',
         fecha_implementacion: 'Fecha Implementación',
+        nomenclatura_registro: 'Nomenclatura Registro',
+        diagnostico_previo: 'Diagnóstico Previo',
+        vulnerabilidad_atendida_2: 'Vulnerabilidad Atendida 2',
+        edad_poblacion_2: 'Edad Población 2',
         horario: 'Horario',
-        horas_acreditar: 'Horas a Acreditar',
-        valor_proyecto: 'Valor',
+        duracion_experiencia: 'Duración Experiencia',
+        horas_acreditar: 'Horas Acreditar',
+        indicaciones_campus_2: 'Indicaciones Campus 2'
     };
+    
 
     useEffect(() => {
         axios.get('http://localhost:5000/proyectos')
@@ -49,28 +90,24 @@ function ProyectosPos() {
     };
 
     const guardarCambio = async () => {
-        const { filaId, columna } = celdaSeleccionada;  // Aquí obtienes la fila y la columna seleccionadas
-        const nuevoValor = valorEditado;  // El valor que has editado en el input
+        const { filaId, columna } = celdaSeleccionada;  
+        const nuevoValor = valorEditado;  
     
         try {
-            // Realizar la solicitud PUT con el valor de la columna y el nuevo valor
             const response = await fetch(`http://localhost:5000/proyecto/${filaId}/editar`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ columna, nuevoValor }),  // Enviar columna y nuevo valor al backend
+                body: JSON.stringify({ columna, nuevoValor }),  
             });
-    
-            // Verificar si la respuesta fue exitosa
+
             const data = await response.json();
             if (response.ok) {
-                // Si la respuesta es exitosa, obtén los proyectos actualizados desde el backend
                 const proyectosActualizados = await axios.get('http://localhost:5000/proyectos');
-                setProyectos(proyectosActualizados.data);  // Actualizar los proyectos en el estado
-    
-                setCeldaSeleccionada(null);  // Desmarcar la celda seleccionada
-                setValorEditado('');  // Limpiar el valor editado
+                setProyectos(proyectosActualizados.data);
+                setCeldaSeleccionada(null);  
+                setValorEditado('');  
             } else {
                 console.error('Error al actualizar proyecto:', data.message);
             }
@@ -100,6 +137,16 @@ function ProyectosPos() {
             });
     }
 
+    const handleChange = (e) => {
+        setFilteredText(e.target.value.toLowerCase());
+    };
+
+    const proyectosFiltrados = proyectos.filter(proy =>
+        Object.values(proy).some(valor =>
+            valor && valor.toString().toLowerCase().includes(filteredText)
+        )
+    );
+
     return (
         <div className="cube" style={{ marginLeft: '260px', padding: '20px' }}>
             <NavCub />
@@ -111,14 +158,16 @@ function ProyectosPos() {
                     <label key={key} style={{ marginRight: '10px' }}>
                         <input
                             type="checkbox"
-                            checked={columnasVisibles.includes(key)}
+                            checked={columnasVisibles.includes(key)|| columnasFijas.includes(key)}
                             onChange={() => {
+                                if (columnasFijas.includes(key)) return;
                                 setColumnasVisibles(prev =>
                                     prev.includes(key)
                                         ? prev.filter(col => col !== key)
                                         : [...prev, key]
                                 );
                             }}
+                            disabled={columnasFijas.includes(key)}
                         />
                         {label}
                     </label>
@@ -126,20 +175,22 @@ function ProyectosPos() {
             </div>
 
             <div className="tabla-container">
+            <p> Buscar: </p>
+            <input type='text' value={filteredText} onChange={handleChange}></input>
                 <div className="tabla-scroll-wrapper">
                     <table className="tabla-proyectos">
                         <thead>
                             <tr>
-                                {columnasVisibles.map(col => (
+                            {[...columnasFijas, ...columnasVisibles].map(col => (
                                     <th key={col}>{columnasDisponibles[col]}</th>
                                 ))}
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {proyectos.map(proyecto => (
+                            {proyectosFiltrados.map(proyecto => (
                                 <tr key={proyecto.id_proyecto}>
-                                    {columnasVisibles.map(col => (
+                                    {[...columnasFijas, ...columnasVisibles].map(col => (
                                         <td
                                             key={col}
                                             onClick={() =>

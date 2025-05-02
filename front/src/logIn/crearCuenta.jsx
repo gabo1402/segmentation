@@ -113,7 +113,7 @@ export default function CrearCuenta() {
     let body = {};
 
     if (tipoUsuario === "estudiante") {
-      url = "http://localhost:5000/registro/alumno";
+      url = "http://localhost:5001/registro/alumno";
       body = {
         correo: email,
         contraseña: password,
@@ -127,6 +127,7 @@ export default function CrearCuenta() {
         telefono,
       };
     } else if (tipoUsuario === "socio") {
+
       if (tipoSocio === "estudiante") {
         url = "http://localhost:5000/registro/socio";
         body = {
@@ -171,6 +172,19 @@ export default function CrearCuenta() {
           telefono_entidad: telefonoEntidad,
         };
       }
+
+      url = "http://localhost:5001/registro/socio";
+      body = {
+        correo: email,
+        contraseña: password,
+        nombre,
+        status: status,
+        tipo_socio: tipoSocio,
+        telefono_socio: telefonoSocio,
+        redes_sociales: redesSociales,
+        notificaciones_socio: notificacionesSocio,
+      };
+
     }
 
     try {
@@ -193,9 +207,35 @@ export default function CrearCuenta() {
   };
 
   return (
+
     <div className="container">
       <div className="form-box">
         <h1 className="title">Crear cuenta</h1>
+
+    <div className="login-container">
+  <div className="login-form-box">
+    <h1 className="title">Crear cuenta</h1>
+
+    <label>Tipo de usuario</label>
+    <select
+      value={tipoUsuario}
+      onChange={(e) => setTipoUsuario(e.target.value)}
+    >
+      <option value="estudiante">Estudiante</option>
+      <option value="socio">Socio formador</option>
+    </select>
+
+    <div className="input-group">
+      <label>Correo</label>
+      <input
+        type="email"
+        placeholder="correo@gmail.com"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      {errorEmail && <span className="error">{errorEmail}</span>}
+    </div>
+
 
         <label>Tipo de usuario</label>
         <select value={tipoUsuario} onChange={(e) => setTipoUsuario(e.target.value)}>

@@ -10,7 +10,7 @@ export default function SignupPage() {
 
   const handleLogin = async () => {
     try {
-      const res = await fetch('http://localhost:5000/login', {
+      const res = await fetch('http://localhost:5001/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ correo: email, contraseña: password })
@@ -20,6 +20,10 @@ export default function SignupPage() {
 
       if (res.ok) {
         console.log('✅ Usuario autenticado:', data);
+
+        // Almacenar el token en localStorage
+        localStorage.setItem('jwt', data.token); // Almacena el JWT
+        
         if (data.tipo === 'estudiante') navigate('/inicioE');
         else if (data.tipo === 'administrador') navigate('/');
         else if (data.tipo === 'socio') navigate('/inicioS');
@@ -33,8 +37,8 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="container">
-      <div className="form-box">
+    <div className="login-container">
+      <div className="login-form-box">
         <h1 className="title">Iniciar Sesion</h1>
 
         <div className="input-group">

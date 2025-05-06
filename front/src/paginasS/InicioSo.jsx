@@ -3,11 +3,11 @@ import NavCub from '../componentes/navegacionS';
 
 function InicioS() {
     return (
-        <div className="cube">
-          <NavCub />
-          <h1>Inicio SOcios</h1>
-        </div>
-    );
+      <div className="cube">
+      <NavCub />
+       <h1>Hola Socio</h1>
+      </div>
+  );
 }
 
 export default InicioS;

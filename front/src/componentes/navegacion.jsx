@@ -6,8 +6,8 @@ function NavCub() {
   return (
     <div className="layout">
       <nav className="nav-bar">
-        <ul>
           <img src="./src/assets/logo_servicio.png" alt="Logo" className="logo servicio social" />
+          <ul>
           <li><Link to="/">Inicio</Link></li>
           <li><Link to="/dashBoardA">DashBoard</Link></li>
           <li><Link to="/proyectosPosA">Proyectso Pos</Link></li>

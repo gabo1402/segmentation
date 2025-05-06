@@ -6,13 +6,13 @@ import axios from "axios";
 function InicioE() {
 
   return (
-    <div className="cube-container">
+    <div className="contenedor-principal">
       <NavCub />
       <div className="cube">
-        <h1>Hola Estudiante</h1>
+        <h1>Hola Estudiantes</h1>
       </div>
     </div>
-  );
+  )
 }
 
 export default InicioE;

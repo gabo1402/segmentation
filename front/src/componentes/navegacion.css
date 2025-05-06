@@ -1,36 +1,56 @@
 .nav-bar {
-    width: 200px; /* Asegúrate de que este ancho es el correcto */
+    width: 200px;
     background-color: #fbf6f6;
-    padding: 20px;
+    padding: 20px 0; /* quitamos padding lateral para mejor control */
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
     border-right: 1px solid #dcdcdc;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centrar el logo */
 }
 
+/* Logo centrado */
+.nav-bar img {
+    width: 120px;
+    height: auto;
+    margin-bottom: 6px;
+}
+
+/* Lista ocupa todo el ancho */
 .nav-bar ul {
     list-style: none;
     padding: 0;
+    width: 100%;
 }
 
+/* Elementos del menú alineados a la izquierda */
 .nav-bar li {
-    margin-bottom: 40px;
-    margin-top: 20px; 
+    margin-bottom: 20px;
+    margin-top: 10px;
+    padding: 0 20px;
 }
 
+/* Botones alineados a la izquierda */
 .nav-bar a {
     display: block;
-    padding: 10px 20px;
+    padding: 10px 15px;
     background-color: #0033A0;
     border: 2px solid #0033A0; 
     border-radius: 12px; 
     text-decoration: none;
     color: #fbf6f6; 
     transition: background-color 0.3s ease;
+    text-align: left;
 }
 
+.nav-bar a:hover {
+    background-color: #002f8a;
+}
 
+/* Barra superior sin cambios mayores */
 .top-bar {
     background-color: #fbf6f6;
     padding: 10px 20px;
@@ -39,9 +59,9 @@
     align-items: center;
     box-shadow: 0 2px 5px rgba(255, 255, 255, 0.1);
     position: fixed;
-    width: calc(100% - 220px);
+    width: calc(100% - 200px);
     top: 0;
-    left: 240px;
+    left: 200px;
     height: 60px;
     color: black;
     border-bottom: 1px solid #dcdcdc;
@@ -56,7 +76,7 @@
     font-size: 1.5em;
     margin-right: 10px;
     cursor: pointer;
-    margin-left: 990px;
+    margin-left: 990px; /* opcional: podrías ajustar esto con flex en lugar de márgenes */
 }
 
 .username {

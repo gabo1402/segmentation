@@ -1,9 +1,127 @@
-.cube {
-    flex-grow: 1;
-    margin-right: 500px;
-    padding: 20px;
-    margin-top: 100px; 
-    background-color: #fbf6f6;
-    color: rgb(0, 0, 0);
+.contenedor-principal {
+    display: flex;
     min-height: 100vh;
 }
+
+.cube {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* Cambia a center si quieres centrar verticalmente */
+    padding: 40px;
+    background-color: #fbf6f6;
+    color: rgb(0, 0, 0);
+    width: 100%;
+    box-sizing: border-box;
+    min-height: calc(100vh - 80px); /* Asegura que ocupe toda la altura menos la top-bar */
+    overflow: auto; /* Opcional: permite scroll si el contenido excede el área */
+  }
+
+  .contenido-centro {
+    width: 100%;
+    max-width: 1100px;
+    padding-top: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+h1 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.grid-proyectos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    width: 100%; /* <-- Ocupa todo el ancho disponible */
+    max-width: 1200px; /* <-- Un máximo para que no se haga gigante en pantallas muy grandes */
+    margin: 0 auto; /* <-- Centrar el grid */
+    padding: 20px 0;
+}
+
+
+.tarjeta-proyecto {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease;
+}
+
+.tarjeta-proyecto:hover {
+    transform: translateY(-5px);
+}
+
+.imagen-proyecto {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+}
+
+.nombre-proyecto {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+.boton-info {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #4A6CF7;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.boton-postularme:hover {
+    background-color: #3b57c4;
+}
+
+.tabla-postulaciones {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 10px;
+    margin: 0 auto; 
+    overflow: hidden;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+    max-width: 1200px;
+  }
+  
+  .tabla-postulaciones th,
+  .tabla-postulaciones td {
+    padding: 15px 20px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .tabla-postulaciones th {
+    background-color: #f3f4f6;
+    color: #333;
+  }
+  
+  .tabla-postulaciones td span.estado {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  
+  .estado.aceptado {
+    background-color: #d1fae5;
+    color: #065f46;
+  }
+  
+  .estado.proceso {
+    background-color: #e9d5ff;
+    color: #6b21a8;
+  }
+  
+  .estado.rechazado {
+    background-color: #fecaca;
+    color: #991b1b;
+  }
